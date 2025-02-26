@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using UsuariosApi.Data.Dtos;
-using UsuariosApi.Models;
+using UsuariosApi.Services;
 
 namespace UsuariosApi.Controllers
 {
@@ -10,26 +8,27 @@ namespace UsuariosApi.Controllers
     [ApiController]
     public class UsuariosController : ControllerBase
     {
-        private IMapper _mapper;
-        private UserManager<Usuario> _userManager;
+        private UsuarioService _usuarioService;
 
-        public UsuariosController(IMapper mapper, UserManager<Usuario> userManager)
+        public UsuariosController(UsuarioService usuarioService)
         {
-            _mapper = mapper;
-            _userManager = userManager;
+            _usuarioService = usuarioService;
         }
 
-        [HttpPost]
+        [HttpPost("cadastro")]
         public async Task<IActionResult> CadastraUsuario(CreateUsuarioDto dto)
         {
-            Usuario usuario = _mapper.Map<Usuario>(dto);
+            await _usuarioService.Cadastra(dto);
 
-            var resultado = await _userManager.CreateAsync(usuario, dto.Password);
+            return Ok("Usuário cadastrado!");
+        }
 
-            if (resultado.Succeeded)
-                return Ok("Usuário cadastrado!");
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginUsuarioDto dto)
+        {
+            await _usuarioService.Login(dto);
 
-            throw new ApplicationException("Falha ao cadastrar uauário");
+            return Ok("Usuário autenticado");
         }
     }
 }

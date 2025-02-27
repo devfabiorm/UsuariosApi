@@ -9,7 +9,7 @@ namespace UsuariosApi.Services
 {
     public class TokenService
     {
-        public void GenerateToken(Usuario usuario)
+        public string GenerateToken(Usuario usuario)
         {
             Claim[] claims = new Claim[]
             {
@@ -18,11 +18,13 @@ namespace UsuariosApi.Services
                 new Claim(ClaimTypes.DateOfBirth, usuario.DataNascimento.ToString())
             };
 
-            var chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("AB}D[KN`$`SIU&S1F658S1SF6SFD"));
+            var chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("AB}D[KN`$`SIU&S1F658S1SF6SFD%#!AG"));
 
-            var signingCredentials = new SigningCredentials(chave, SecurityAlgorithms.HmacSha256Signature);
+            var signingCredentials = new SigningCredentials(chave, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(expires: DateTime.Now.AddMinutes(10), claims: claims, signingCredentials: signingCredentials);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
